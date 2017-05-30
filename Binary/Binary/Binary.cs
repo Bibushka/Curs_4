@@ -7,13 +7,20 @@ namespace Binary
     public class Binary
     {
         [TestMethod]
+        public void GetBinaryForm()
         {
-            CollectionAssert.AreEqual(new byte[] {0,0,0,1}, ReturnBytes(1));
+            CollectionAssert.AreEqual(new byte[] {0,0,0,1}, ReturnBytes(1, 2));
         }
 
-        public Array ReturnBytes(int number)
+        public Array ReturnBytes(int number, int prefferedBase)
         {
-            return new byte[] {0,0,0,0};
+            int[] yourByte = new int[4];
+            for(int i=yourByte.Length; i>=0; i--)
+            {
+                yourByte[i] = number % prefferedBase;
+                number = number / prefferedBase;
+            }
+            return yourByte;
         }
     }
 }
