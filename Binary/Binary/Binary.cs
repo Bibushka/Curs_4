@@ -9,16 +9,17 @@ namespace Binary
         [TestMethod]
         public void GetBinaryForm()
         {
-            CollectionAssert.AreEqual(new byte[] {0,0,0,1}, ReturnBytes(1, 2));
+            Assert.AreEqual(new byte[] {1}, ReturnBytes(1));
         }
 
-        public Array ReturnBytes(int number, int prefferedBase)
+        public byte[] ReturnBytes(int number)
         {
-            int[] yourByte = new int[4];
-            for(int i=yourByte.Length; i>=0; i--)
+            byte[] yourByte= { };
+            while (number!=0)
             {
-                yourByte[i] = number % prefferedBase;
-                number = number / prefferedBase;
+                Array.Resize(ref yourByte, 1);
+                yourByte[yourByte.Length-1] = Convert.ToByte(number % 2);
+                number = number / 2;
             }
             return yourByte;
         }
