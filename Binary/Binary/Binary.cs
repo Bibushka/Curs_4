@@ -9,15 +9,20 @@ namespace Binary
         [TestMethod]
         public void GetBinaryForm()
         {
+            Assert.AreEqual(new byte[] {1, 0}, ReturnBytes(2, 2));
         }
+        
 
-        public byte[] ReturnBytes(int number)
+        public byte[] ReturnBytes(int number, int chosenBase)
         {
             byte[] yourByte= { };
+            while (number!=0)
             {
-                yourByte[yourByte.Length-1] = Convert.ToByte(number % 2);
-                number = number / 2;
+                Array.Resize(ref yourByte, yourByte.Length+1);
+                yourByte[yourByte.Length-1] = Convert.ToByte(number % chosenBase);
+                number = number / chosenBase;
             }
+            Array.Reverse(yourByte);
             return yourByte;
         }
     }
