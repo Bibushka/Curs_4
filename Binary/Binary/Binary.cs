@@ -1,28 +1,51 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Binary
 {
-    [TestClass]
     public class Binary
     {
-        [TestMethod]
+        [Fact]
         public void GetBinaryForm()
         {
-            Assert.AreEqual(new byte[] {1, 0}, ReturnBytes(2, 2));
+            Assert.Equal(new byte[] { 1 }, ReturnBytes(1));
         }
-        
 
-        public byte[] ReturnBytes(int number, int chosenBase)
+        [Theory]
+        public void GetNot(int first, int second)
+        {
+            Assert.Equal(ReturnBytes(first), NOT(second));
+        }
+
+        public byte[] ReturnBytes(int number)
         {
             byte[] yourByte= { };
-            while (number!=0)
+            if (number == 0)
             {
-                Array.Resize(ref yourByte, yourByte.Length+1);
-                yourByte[yourByte.Length-1] = Convert.ToByte(number % chosenBase);
-                number = number / chosenBase;
+                Array.Resize(ref yourByte, yourByte.Length + 1);
+            }
+            else
+            {
+                while (number > 0)
+                {
+                    Array.Resize(ref yourByte, yourByte.Length + 1);
+                    yourByte[yourByte.Length - 1] = (byte)(number % 2);
+                    number = number / 2;
+                }
             }
             Array.Reverse(yourByte);
+            return yourByte;
+        }
+
+        public byte[] NOT(int firstNumber)
+        {
+            byte[] yourByte = ReturnBytes(firstNumber);
+            for (int i = 0; i < yourByte.Length; i++)
+            {
+                if (yourByte[i] == 0)
+                    yourByte[i] = 1;
+                yourByte[i] = 0;
+            }
             return yourByte;
         }
     }
