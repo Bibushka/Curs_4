@@ -11,7 +11,14 @@ namespace Binary
             Assert.Equal(new byte[] { 1 }, ReturnBytes(1));
         }
 
+        [Fact]
+        public void GetBinaryFormForZero()
+        {
+            Assert.Equal(new byte[] { 0 }, ReturnBytes(0));
+        }
+
         [Theory]
+        [InlineData(1,0)]
         public void GetNot(int first, int second)
         {
             Assert.Equal(ReturnBytes(first), NOT(second));
@@ -23,6 +30,7 @@ namespace Binary
             if (number == 0)
             {
                 Array.Resize(ref yourByte, yourByte.Length + 1);
+                yourByte[0] = 0;
             }
             else
             {
