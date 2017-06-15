@@ -18,10 +18,17 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(1,0)]
+        [InlineData(0, 1)]
+        [InlineData(0, 7)]
         public void GetNot(int first, int second)
         {
             Assert.Equal(ReturnBytes(first), NOT(second));
+        }
+
+        [Fact]
+        public void NoZeros()
+        {
+            Assert.Equal(new byte[] { 1, 0 }, EraseZeros(new byte[] { 0, 0, 1, 0 }));
         }
 
         public byte[] ReturnBytes(int number)
@@ -48,13 +55,39 @@ namespace Binary
         public byte[] NOT(int firstNumber)
         {
             byte[] yourByte = ReturnBytes(firstNumber);
+            int counter = 0;
+            for (int i = 0; i < yourByte.Length; i++)
+                if (yourByte[i] == 1)
+                    counter++;
+            if (counter == yourByte.Length)
+            {
+                byte[] result = { 0 };
+                return result;
+            }
             for (int i = 0; i < yourByte.Length; i++)
             {
                 if (yourByte[i] == 0)
                     yourByte[i] = 1;
-                yourByte[i] = 0;
+                else
+                    yourByte[i] = 0;
             }
-            return yourByte;
+            return EraseZeros(yourByte);
+        }
+
+        public byte[] EraseZeros(byte[] yourByte)
+        {
+            int counter = 0;
+            for (int i = 0; i < yourByte.Length; i++)
+            {
+                if(yourByte[i] == 0)
+                    counter++;
+                else
+                    break;
+            }
+            Array.Reverse(yourByte);
+            Array.Resize(ref yourByte, yourByte.Length - counter);
+            Array.Reverse(yourByte);
+            return yourByte;       
         }
     }
 }
