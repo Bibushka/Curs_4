@@ -33,6 +33,14 @@ namespace Binary
             Assert.Equal(ReturnBytes(expected), OR(first, second));
         }
 
+        [Theory]
+        [InlineData(1, 5, 3)]
+        [InlineData(5, 7, 5)]
+        public void GetAND(int expected, int first, int second)
+        {
+            Assert.Equal(ReturnBytes(expected), AND(first, second));
+        }
+
         [Fact]
         public void NoZeros()
         {
@@ -105,6 +113,32 @@ namespace Binary
                 else
                     result[i] = 1;
             return result;
+        }
+
+        public byte[] AND(int first, int second)
+        {
+            byte[] firstByte = ReturnBytes(first);
+            byte[] secondByte = ReturnBytes(second);
+            if (firstByte.Length > secondByte.Length)
+            {
+                Array.Reverse(secondByte);
+                Array.Resize(ref secondByte, firstByte.Length);
+                Array.Reverse(secondByte);
+            }
+            if (secondByte.Length > firstByte.Length)
+            {
+                Array.Reverse(firstByte);
+                Array.Resize(ref firstByte, secondByte.Length);
+                Array.Reverse(firstByte);
+            }
+            byte[] result = new byte[firstByte.Length];
+            for (int i = 0; i < firstByte.Length; i++)
+                if (firstByte[i] == 1 && secondByte[i] == 1)
+                    result[i] = 1;
+                else
+                    result[i] = 0;
+
+            return EraseZeros(result);
         }
 
         public byte[] EraseZeros(byte[] yourByte)
