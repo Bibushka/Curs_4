@@ -22,7 +22,7 @@ namespace Binary
         [InlineData(0, 7)]
         public void GetNot(int first, int second)
         {
-            Assert.Equal(ReturnBytes(first), NOT(second));
+            Assert.Equal(ReturnBytes(first), NOT(ReturnBytes(second)));
         }
 
         [Theory]
@@ -30,7 +30,7 @@ namespace Binary
         [InlineData(10, 10, 10)]
         public void GetOR(int expected, int first, int second)
         {
-            Assert.Equal(ReturnBytes(expected), OR(first, second));
+            Assert.Equal(ReturnBytes(expected), OR(ReturnBytes(first), ReturnBytes(second)));
         }
 
         [Theory]
@@ -38,7 +38,7 @@ namespace Binary
         [InlineData(5, 7, 5)]
         public void GetAND(int expected, int first, int second)
         {
-            Assert.Equal(ReturnBytes(expected), AND(first, second));
+            Assert.Equal(ReturnBytes(expected), AND(ReturnBytes(first), ReturnBytes(second)));
         }
 
         [Theory]
@@ -46,7 +46,39 @@ namespace Binary
         [InlineData(8, 10, 2)] 
         public void GetXOR(int expected, int first, int second)
         {
-            Assert.Equal(ReturnBytes(expected), XOR(first, second));
+            Assert.Equal(ReturnBytes(expected), XOR(ReturnBytes(first), ReturnBytes(second)));
+        }
+
+        [Theory]
+        [InlineData(8, 1, 3)]
+        [InlineData(20, 5, 2)]
+        public void GetShiftLeft(int expected, int number, int step)
+        {
+            Assert.Equal(ReturnBytes(expected), ShiftLeft(ReturnBytes(number), step));
+        }
+
+        [Theory]
+        [InlineData(1, 8, 3)]
+        [InlineData(12, 50, 2)]
+        public void GetShiftRight(int expected, int number, int step)
+        {
+            Assert.Equal(ReturnBytes(expected), ShiftRight(ReturnBytes(number), step));
+        }
+
+        [Theory]
+        [InlineData(1, 8)]
+        [InlineData(12, 50)]
+        public void GetLessThen(int question, int answer)
+        {
+            Assert.True (LessThen(ReturnBytes(question), ReturnBytes(answer)));
+        }
+
+        [Theory]
+        [InlineData(9, 8)]
+        [InlineData(51, 50)]
+        public void GetLessThenFail(int question, int answer)
+        {
+            Assert.False(LessThen(ReturnBytes(question), ReturnBytes(answer)));
         }
 
         [Fact]
@@ -76,9 +108,8 @@ namespace Binary
             return yourByte;
         }
 
-        public byte[] NOT(int firstNumber)
+        public byte[] NOT(byte[] yourByte)
         {
-            byte[] yourByte = ReturnBytes(firstNumber);
             int counter = 0;
             for (int i = 0; i < yourByte.Length; i++)
                 if (yourByte[i] == 1)
@@ -98,22 +129,12 @@ namespace Binary
             return EraseZeros(yourByte);
         }
 
-        public byte[] OR(int first, int second)
+        public byte[] OR(byte[] firstByte, byte[] secondByte)
         {
-            byte[] firstByte = ReturnBytes(first);
-            byte[] secondByte = ReturnBytes(second);
             if (firstByte.Length > secondByte.Length)
-            {
-                Array.Reverse(secondByte);
-                Array.Resize(ref secondByte, firstByte.Length);
-                Array.Reverse(secondByte);
-            }
+                secondByte = AddZerosInFront(secondByte, firstByte.Length);
             if (secondByte.Length > firstByte.Length)
-            {
-                Array.Reverse(firstByte);
-                Array.Resize(ref firstByte, secondByte.Length);
-                Array.Reverse(firstByte);
-            }
+                firstByte = AddZerosInFront(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if (firstByte[i] == 0 && secondByte[i] == 0)
@@ -123,22 +144,12 @@ namespace Binary
             return EraseZeros( result);
         }
 
-        public byte[] AND(int first, int second)
+        public byte[] AND(byte[] firstByte, byte[] secondByte)
         {
-            byte[] firstByte = ReturnBytes(first);
-            byte[] secondByte = ReturnBytes(second);
             if (firstByte.Length > secondByte.Length)
-            {
-                Array.Reverse(secondByte);
-                Array.Resize(ref secondByte, firstByte.Length);
-                Array.Reverse(secondByte);
-            }
+                secondByte = AddZerosInFront(secondByte, firstByte.Length);
             if (secondByte.Length > firstByte.Length)
-            {
-                Array.Reverse(firstByte);
-                Array.Resize(ref firstByte, secondByte.Length);
-                Array.Reverse(firstByte);
-            }
+                firstByte = AddZerosInFront(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if (firstByte[i] == 1 && secondByte[i] == 1)
@@ -149,22 +160,12 @@ namespace Binary
             return EraseZeros(result);
         }
 
-        public byte[] XOR(int first, int second)
+        public byte[] XOR(byte[] firstByte, byte[] secondByte)
         {
-            byte[] firstByte = ReturnBytes(first);
-            byte[] secondByte = ReturnBytes(second);
             if (firstByte.Length > secondByte.Length)
-            {
-                Array.Reverse(secondByte);
-                Array.Resize(ref secondByte, firstByte.Length);
-                Array.Reverse(secondByte);
-            }
+                secondByte = AddZerosInFront (secondByte, firstByte.Length);
             if (secondByte.Length > firstByte.Length)
-            {
-                Array.Reverse(firstByte);
-                Array.Resize(ref firstByte, secondByte.Length);
-                Array.Reverse(firstByte);
-            }
+                firstByte = AddZerosInFront(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if ((firstByte[i] == 1 || secondByte[i] == 1) && (firstByte[i] == 0 || secondByte[i] == 0))
@@ -172,6 +173,38 @@ namespace Binary
                 else
                     result[i] = 0;
             return EraseZeros(result);
+        }
+
+        public byte[] ShiftLeft(byte[] yourByte, int step)
+        {
+            Array.Resize(ref yourByte, yourByte.Length + step);
+            return EraseZeros(yourByte);
+        }
+
+        public byte[] ShiftRight(byte[] yourByte, int step)
+        {
+            Array.Resize(ref yourByte, yourByte.Length - step);
+            return EraseZeros(yourByte);
+        }
+
+        public bool LessThen(byte[] firstByte, byte[] secondByte)
+        {
+            if (firstByte.Length < secondByte.Length)
+                return true;
+            if (firstByte.Length > secondByte.Length)
+                return false;
+            for (int i = 0; i < firstByte.Length; i++)
+                if (firstByte[i] < secondByte[i])
+                    return true;
+            return false;
+        }
+
+        public byte[] AddZerosInFront(byte[] yourByte, int lenght)
+        {
+            Array.Reverse(yourByte);
+            Array.Resize(ref yourByte, lenght);
+            Array.Reverse(yourByte);
+            return yourByte;
         }
 
         public byte[] EraseZeros(byte[] yourByte)
