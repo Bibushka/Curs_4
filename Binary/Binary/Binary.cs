@@ -110,15 +110,6 @@ namespace Binary
 
         public byte[] NOT(byte[] yourByte)
         {
-            int counter = 0;
-            for (int i = 0; i < yourByte.Length; i++)
-                if (yourByte[i] == 1)
-                    counter++;
-            if (counter == yourByte.Length)
-            {
-                byte[] result = { 0 };
-                return result;
-            }
             for (int i = 0; i < yourByte.Length; i++)
             {
                 if (yourByte[i] == 0)
@@ -131,25 +122,21 @@ namespace Binary
 
         public byte[] OR(byte[] firstByte, byte[] secondByte)
         {
-            if (firstByte.Length > secondByte.Length)
-                secondByte = AddZerosInFront(secondByte, firstByte.Length);
-            if (secondByte.Length > firstByte.Length)
-                firstByte = AddZerosInFront(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if (firstByte[i] == 0 && secondByte[i] == 0)
                     result[i] = 0;
                 else
                     result[i] = 1;
-            return EraseZeros( result);
+            return EraseZeros(result);
         }
 
         public byte[] AND(byte[] firstByte, byte[] secondByte)
         {
             if (firstByte.Length > secondByte.Length)
-                secondByte = AddZerosInFront(secondByte, firstByte.Length);
+                secondByte = ResizeByte(secondByte, firstByte.Length);
             if (secondByte.Length > firstByte.Length)
-                firstByte = AddZerosInFront(firstByte, secondByte.Length);
+                firstByte = ResizeByte(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if (firstByte[i] == 1 && secondByte[i] == 1)
@@ -163,9 +150,9 @@ namespace Binary
         public byte[] XOR(byte[] firstByte, byte[] secondByte)
         {
             if (firstByte.Length > secondByte.Length)
-                secondByte = AddZerosInFront (secondByte, firstByte.Length);
+                secondByte = ResizeByte (secondByte, firstByte.Length);
             if (secondByte.Length > firstByte.Length)
-                firstByte = AddZerosInFront(firstByte, secondByte.Length);
+                firstByte = ResizeByte(firstByte, secondByte.Length);
             byte[] result = new byte[firstByte.Length];
             for (int i = 0; i < firstByte.Length; i++)
                 if ((firstByte[i] == 1 || secondByte[i] == 1) && (firstByte[i] == 0 || secondByte[i] == 0))
@@ -199,7 +186,7 @@ namespace Binary
             return false;
         }
 
-        public byte[] AddZerosInFront(byte[] yourByte, int lenght)
+        public byte[] ResizeByte(byte[] yourByte, int lenght)
         {
             Array.Reverse(yourByte);
             Array.Resize(ref yourByte, lenght);
@@ -218,7 +205,7 @@ namespace Binary
                     break;
             }
             Array.Reverse(yourByte);
-            Array.Resize(ref yourByte, yourByte.Length - counter);
+            Array.Resize(ref yourByte, (yourByte.Length == counter ? 1 : yourByte.Length - counter));
             Array.Reverse(yourByte);
             return yourByte;       
         }
