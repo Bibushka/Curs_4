@@ -81,6 +81,30 @@ namespace Binary
             Assert.False(LessThen(ReturnBytes(question), ReturnBytes(answer)));
         }
 
+        [Theory]
+        [InlineData(4, 3)]
+        [InlineData(140, 50)]
+        public void GetGreaterThen(int question, int answer)
+        {
+            Assert.True(GreaterThen(ReturnBytes(question), ReturnBytes(answer)));
+        }
+
+        [Theory]
+        [InlineData(5, 8)]
+        [InlineData(6, 50)]
+        public void GetGreaterThenFail(int question, int answer)
+        {
+            Assert.False(GreaterThen(ReturnBytes(question), ReturnBytes(answer)));
+        }
+
+        [Theory]
+        [InlineData(8, 8)]
+        [InlineData(50, 50)]
+        public void GetEqual(int question, int answer)
+        {
+            Assert.True(Equal(ReturnBytes(question), ReturnBytes(answer)));
+        }
+
         [Fact]
         public void NoZeros()
         {
@@ -186,6 +210,28 @@ namespace Binary
             return false;
         }
 
+        public bool GreaterThen(byte[] firstByte, byte[] secondByte)
+        {
+            if (firstByte.Length > secondByte.Length)
+                return true;
+            if (firstByte.Length < secondByte.Length)
+                return false;
+            for (int i = 0; i < firstByte.Length; i++)
+                if (firstByte[i] > secondByte[i])
+                    return true;
+            return false;
+        }
+
+        public bool Equal(byte[] firstByte, byte[] secondByte)
+        {
+            if (firstByte.Length != secondByte.Length)
+                return false;
+            for (int i = 0; i < firstByte.Length; i++)
+                if (firstByte[i] != secondByte[i])
+                    return false;
+            return true;
+        }
+
         public byte[] ResizeByte(byte[] yourByte, int lenght)
         {
             Array.Reverse(yourByte);
@@ -204,10 +250,7 @@ namespace Binary
                 else
                     break;
             }
-            Array.Reverse(yourByte);
-            Array.Resize(ref yourByte, (yourByte.Length == counter ? 1 : yourByte.Length - counter));
-            Array.Reverse(yourByte);
-            return yourByte;       
+            return ResizeByte(yourByte, (yourByte.Length == counter ? 1 : yourByte.Length - counter));       
         }
     }
 }
