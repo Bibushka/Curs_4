@@ -102,14 +102,14 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(25, 20, 5)]
+        [InlineData(4, 2, 2)]
         public void GetSum(int result, int first, int second)
         {
             Assert.Equal(ReturnBytes(result), Sum(ReturnBytes(first), ReturnBytes(second)));
         }
 
         [Theory]
-        [InlineData(90, 15, 6)]
+        [InlineData(6, 2, 3)]
         public void GetProduct(int result, int multiplicand, int multiplier)
         {
             Assert.Equal(ReturnBytes(result), Product(ReturnBytes(multiplicand), multiplier));
@@ -167,13 +167,9 @@ namespace Binary
 
         public byte[] AND(byte[] firstByte, byte[] secondByte)
         {
-            if (firstByte.Length > secondByte.Length)
-                secondByte = ResizeByte(secondByte, firstByte.Length);
-            if (secondByte.Length > firstByte.Length)
-                firstByte = ResizeByte(firstByte, secondByte.Length);
-            byte[] result = new byte[firstByte.Length];
-            for (int i = 0; i < firstByte.Length; i++)
-                if (firstByte[i] == 1 && secondByte[i] == 1)
+            byte[] result = new byte[Math.Max(firstByte.Length, secondByte.Length)];
+            for (int i = 0; i < result.Length; i++)
+                if (GetAt(firstByte,i) == 1 && GetAt(secondByte, i) == 1)
                     result[i] = 1;
                 else
                     result[i] = 0;
@@ -183,13 +179,9 @@ namespace Binary
 
         public byte[] XOR(byte[] firstByte, byte[] secondByte)
         {
-            if (firstByte.Length > secondByte.Length)
-                secondByte = ResizeByte (secondByte, firstByte.Length);
-            if (secondByte.Length > firstByte.Length)
-                firstByte = ResizeByte(firstByte, secondByte.Length);
-            byte[] result = new byte[firstByte.Length];
-            for (int i = 0; i < firstByte.Length; i++)
-                if ((firstByte[i] == 1 || secondByte[i] == 1) && (firstByte[i] == 0 || secondByte[i] == 0))
+            byte[] result = new byte[Math.Max(firstByte.Length, secondByte.Length)];
+            for (int i = 0; i < result.Length; i++)
+                if (GetAt(firstByte, i) != GetAt(secondByte, i))
                     result[i] = 1;
                 else
                     result[i] = 0;
@@ -254,62 +246,27 @@ namespace Binary
 
         public byte[] Sum(byte[] firstByte, byte[] secondByte)
         {
-            if (firstByte.Length > secondByte.Length)
-                secondByte = ResizeByte(secondByte, firstByte.Length);
-            if (secondByte.Length > firstByte.Length)
-                firstByte = ResizeByte(firstByte, secondByte.Length);
-            byte[] result = new byte[firstByte.Length+1];
+            byte[] result = new byte[Math.Max(firstByte.Length, secondByte.Length)];
             int counter = 0;
-            Array.Reverse(firstByte);
-            Array.Reverse(secondByte);
-            for (int i = 0; i < firstByte.Length; i++)
+            for (int i = 0; i < result.Length; i++)
             {
-                if ((firstByte[i] != secondByte[i]))
-                {
-                    if (counter != 1)
-                        result[i] = 1;
-                    else
-                    {
-                        result[i] = 0;
-                        counter = 0;
-                    }
-                }
-                if (firstByte[i] == secondByte[i] && firstByte[i] == 1)
-                {
-                    if (counter != 1)
-                    {
-                        result[i] = 0;
-                        counter = 1;
-                    }
-                    else
-                    {
-                        result[i] = 1;
-                        counter = 1;
-                    }
-                }
-                if (firstByte[i] == secondByte[i] && firstByte[i] == 0)
-                {
-                    if (counter != 1)
-                        result[i] = 0;
-                    else
-                    {
-                        result[i] = 1;
-                        counter = 0;
-                    }
-                }
-                if (i == ((firstByte.Length < secondByte.Length ? secondByte.Length : firstByte.Length)-1) && counter == 1)
-                    result[i + 1] = 1;
+                var sum = GetAt(firstByte, i) + GetAt(secondByte, i) + counter;
+                result[i] = sum % 2;
+                counter = sum / 2;
             }
-            Array.Reverse(result);
-            return EraseZeros(result);
+            if (counter == 1)
+            {
+                result = ResizeByte(result, result.Length);
+                result[result.Length] = (byte )counter;
+            }
+            return result;
         }
 
         public byte[] Product(byte[] yourByte, int multiplier)
         {
-            byte[] result = yourByte;
-            while (multiplier != 1)
+            byte[] result = new byte[yourByte.Length];
+            while (multiplier != 2)
             {
-                Array.Resize(ref result, result.Length + 1);
                 result = Sum(result, yourByte);
                 multiplier--;
             }
@@ -322,6 +279,11 @@ namespace Binary
             Array.Resize(ref yourByte, lenght);
             Array.Reverse(yourByte);
             return yourByte;
+        }
+
+        public int GetAt(byte[] yourByte, int i)
+        {
+            return i > yourByte.Length ? 0 : yourByte[yourByte.Length - i - 1];
         }
 
         public byte[] EraseZeros(byte[] yourByte)
