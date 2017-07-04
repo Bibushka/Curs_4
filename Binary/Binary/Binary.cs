@@ -18,6 +18,14 @@ namespace Binary
         }
 
         [Theory]
+        [InlineData(1, 7, 2)]
+        [InlineData(0, 6, 3)]
+        public void IsGetAtGood(int returnedValue, int yourByte, int position)
+        {
+            Assert.Equal(returnedValue, GetAt(ReturnBytes(yourByte), position));
+        }
+
+        [Theory]
         [InlineData(0, 1)]
         public void GetNot(int first, int second)
         {
@@ -32,7 +40,7 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(1, 5, 3)]
+        [InlineData(3, 7, 3)]
         public void GetAND(int expected, int first, int second)
         {
             Assert.Equal(ReturnBytes(expected), AND(ReturnBytes(first), ReturnBytes(second)));
@@ -103,6 +111,7 @@ namespace Binary
 
         [Theory]
         [InlineData(4, 2, 2)]
+        [InlineData(8, 5, 3)]
         public void GetSum(int result, int first, int second)
         {
             Assert.Equal(ReturnBytes(result), Sum(ReturnBytes(first), ReturnBytes(second)));
@@ -110,9 +119,24 @@ namespace Binary
 
         [Theory]
         [InlineData(6, 2, 3)]
+        [InlineData(10, 5, 2)]
         public void GetProduct(int result, int multiplicand, int multiplier)
         {
             Assert.Equal(ReturnBytes(result), Product(ReturnBytes(multiplicand), multiplier));
+        }
+
+        [Theory]
+        [InlineData(5, 8, 3)]
+        public void GetSubtraction(int result, int minuend, int subtrahend)
+        {
+            Assert.Equal(ReturnBytes(result), Subtraction(ReturnBytes(minuend), ReturnBytes(subtrahend)));
+        }
+
+        [Theory]
+        [InlineData(5, 15, 3)]
+        public void GetDivision(int result, int dividend, int divisor)
+        {
+            Assert.Equal(ReturnBytes(result), Division(ReturnBytes(dividend), divisor));
         }
 
         [Fact]
@@ -173,7 +197,7 @@ namespace Binary
                     result[i] = 1;
                 else
                     result[i] = 0;
-
+            Array.Reverse(result);
             return EraseZeros(result);
         }
 
@@ -185,6 +209,7 @@ namespace Binary
                     result[i] = 1;
                 else
                     result[i] = 0;
+            Array.Reverse(result);
             return EraseZeros(result);
         }
 
@@ -251,13 +276,13 @@ namespace Binary
             for (int i = 0; i < result.Length; i++)
             {
                 var sum = GetAt(firstByte, i) + GetAt(secondByte, i) + counter;
-                result[i] = sum % 2;
+                result[i] = (byte) (sum % 2);
                 counter = sum / 2;
             }
             if (counter == 1)
             {
-                result = ResizeByte(result, result.Length);
-                result[result.Length] = (byte )counter;
+                result = ResizeByte(result, result.Length+1);
+                result[0] = (byte )counter;
             }
             return result;
         }
@@ -265,10 +290,34 @@ namespace Binary
         public byte[] Product(byte[] yourByte, int multiplier)
         {
             byte[] result = new byte[yourByte.Length];
-            while (multiplier != 2)
+            while (multiplier != 0)
             {
                 result = Sum(result, yourByte);
                 multiplier--;
+            }
+            return EraseZeros(result);
+        }
+
+        public byte[] Subtraction(byte[] firstByte, byte[] secondBye)
+        {
+            byte[] result = new byte[Math.Max(firstByte.Length, secondBye.Length)];
+            int counter = 0;
+            for (int i = 0; i < result.Length; i++)
+            {
+                var dif = 2 + GetAt(firstByte, i) - GetAt(secondBye, i) - counter;
+                result[result.Length - i - 1] = (byte)(dif % 2);
+                counter = dif<=1 ? 1: 0;
+            }
+            return EraseZeros(result);
+        }
+
+        public byte[] Division(byte[] yourByte, int divisor)
+        {
+            byte[] result = new byte[yourByte.Length];
+            while (divisor != 0)
+            {
+                result = Subtraction(result, yourByte);
+                divisor--;
             }
             return EraseZeros(result);
         }
@@ -283,7 +332,7 @@ namespace Binary
 
         public int GetAt(byte[] yourByte, int i)
         {
-            return i > yourByte.Length ? 0 : yourByte[yourByte.Length - i - 1];
+            return (i >= yourByte.Length ? 0 : yourByte[yourByte.Length - i - 1]);
         }
 
         public byte[] EraseZeros(byte[] yourByte)
