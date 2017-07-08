@@ -126,7 +126,7 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(5, 8, 3)]
+        [InlineData(9, 12, 3)]
         public void GetSubtraction(int result, int minuend, int subtrahend)
         {
             Assert.Equal(ReturnBytes(result), Subtraction(ReturnBytes(minuend), ReturnBytes(subtrahend)));
@@ -313,13 +313,16 @@ namespace Binary
 
         public byte[] Division(byte[] yourByte, int divisor)
         {
-            byte[] result = new byte[yourByte.Length];
-            while (divisor != 0)
+            byte[] result = yourByte;
+            byte[] divisorByte = ReturnBytes(divisor);
+            byte[] compareByte = { 0};
+            int counter = 0;
+            while (result != compareByte)
             {
-                result = Subtraction(result, yourByte);
-                divisor--;
+                result = Subtraction(result, divisorByte);
+                counter++;
             }
-            return EraseZeros(result);
+            return ReturnBytes(counter);
         }
 
         public byte[] ResizeByte(byte[] yourByte, int lenght)
