@@ -317,7 +317,7 @@ namespace Binary
             byte[] divisorByte = ReturnBytes(divisor);
             byte[] compareByte = { 0};
             int counter = 0;
-            while (result != compareByte)
+            while (Equal(result, compareByte)!=true)
             {
                 result = Subtraction(result, divisorByte);
                 counter++;
