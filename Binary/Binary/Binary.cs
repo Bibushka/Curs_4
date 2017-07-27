@@ -68,45 +68,38 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(1, 8)]
-        public void GetLess(int question, int answer)
+        [InlineData(4, 4)]
+        public void GetComparisonEqual(int first, int second)
         {
-            Assert.True(LessThen(ReturnBytes(question), ReturnBytes(answer)));
+            Assert.Equal("Equal", Compare(ReturnBytes(first), ReturnBytes(second)));
+        }
+        [Theory]
+        [InlineData(4, 3)]
+        public void GetComparisonGreater(int first, int second)
+        {
+            Assert.Equal("Greater", Compare(ReturnBytes(first), ReturnBytes(second)));
+        }
+
+
+        [Theory]
+        [InlineData(4, 7)]
+        public void GetComparisonLess(int first, int second)
+        {
+            Assert.Equal("Less", Compare(ReturnBytes(first), ReturnBytes(second)));
         }
         
         [Theory]
-        [InlineData(9, 8)]
-        public void GetLessThenFail(int question, int answer)
-        {
-            Assert.False(LessThen(ReturnBytes(question), ReturnBytes(answer)));
-        }
-
-        [Theory]
-        [InlineData(4, 3)]
-        public void GetGreaterThen(int question, int answer)
-        {
-            Assert.True(GreaterThen(ReturnBytes(question), ReturnBytes(answer)));
-        }
-
-        [Theory]
         [InlineData(5, 8)]
-        public void GetGreaterThenFail(int question, int answer)
+        public void GetNotEqualTrue(int first, int second)
         {
-            Assert.False(GreaterThen(ReturnBytes(question), ReturnBytes(answer)));
+            Assert.Equal("Not equal", NotEqual(ReturnBytes(first), ReturnBytes(second)));
         }
 
         [Theory]
-        [InlineData(8, 8)]
-        public void GetEqual(int question, int answer)
+        [InlineData(5, 5)]
+        public void GetNotEqualFalse(int first, int second)
         {
-            Assert.True(Equal(ReturnBytes(question), ReturnBytes(answer)));
-        }
-
-        [Theory]
-        [InlineData(5, 8)]
-        public void GetNotEqual(int question, int answer)
-        {
-            Assert.True(NotEqual(ReturnBytes(question), ReturnBytes(answer)));
+            Assert.Equal("Equal", NotEqual(ReturnBytes(first), ReturnBytes(second)));
         }
 
         [Theory]
@@ -224,49 +217,31 @@ namespace Binary
             Array.Resize(ref yourByte, yourByte.Length - step);
             return EraseZeros(yourByte);
         }
-
-        public bool LessThen(byte[] firstByte, byte[] secondByte)
+        
+        public string Compare(byte[] firstByte, byte[] secondByte)
         {
-            if (firstByte.Length < secondByte.Length)
-                return true;
             if (firstByte.Length > secondByte.Length)
-                return false;            
-            for (int i = 0; i < firstByte.Length; i++)
-                if (firstByte[i] < secondByte[i])
-                    return true;
-            return false;
+                return "Greater";
+            if (firstByte.Length < secondByte.Length)
+                return "Less";
+            for (int i = firstByte.Length - 1; i >= 0; i--)
+            {
+                if (GetAt(firstByte, i) > GetAt(secondByte, i))
+                    return "Greater";
+                if (GetAt(firstByte, i) < GetAt(secondByte, i))
+                    return "Less";
+            }
+            return "Equal";
         }
        
-        public bool GreaterThen(byte[] firstByte, byte[] secondByte)
-        {
-            if (firstByte.Length > secondByte.Length)
-                return true;
-            if (firstByte.Length < secondByte.Length)
-                return false;
-            for (int i = 0; i < firstByte.Length; i++)
-                if (firstByte[i] > secondByte[i]) 
-                    return true;
-            return false;
-        }
-
-        public bool Equal(byte[] firstByte, byte[] secondByte)
+        public string NotEqual(byte[] firstByte, byte[] secondByte)
         {
             if (firstByte.Length != secondByte.Length)
-                return false;
-            for (int i = 0; i < firstByte.Length; i++)
-                if (firstByte[i] != secondByte[i])
-                    return false;
-            return true;
-        }
-
-        public bool NotEqual(byte[] firstByte, byte[] secondByte)
-        {
-            if (firstByte.Length != secondByte.Length)
-                return true;
-            for (int i = 0; i < firstByte.Length; i++)
-                if (firstByte[i] != secondByte[i])
-                    return true;
-            return false;
+                return "Not equal";
+            for (int i = firstByte.Length-1; i >=0; i--)
+                if (GetAt(firstByte, i) != GetAt(secondByte, i))
+                    return "Not equal";
+            return "Equal";
         }
 
         public byte[] Sum(byte[] firstByte, byte[] secondByte)
@@ -317,7 +292,7 @@ namespace Binary
             byte[] divisorByte = ReturnBytes(divisor);
             byte[] compareByte = { 0};
             int counter = 0;
-            while (Equal(result, compareByte)!=true)
+            while (Compare(result, compareByte)!="Equal")
             {
                 result = Subtraction(result, divisorByte);
                 counter++;
