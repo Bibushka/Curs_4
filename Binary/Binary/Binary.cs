@@ -8,128 +8,128 @@ namespace Binary
         [Fact]
         public void GetBinaryForm()
         {
-            Assert.Equal(new byte[] { 1 }, ReturnBytes(1));
+            Assert.Equal(new byte[] {1, 2 }, ReturnBytes(5,3));
         }
 
         [Fact]
         public void GetBinaryFormForZero()
         {
-            Assert.Equal(new byte[] { 0 }, ReturnBytes(0));
+            Assert.Equal(new byte[] { 0 }, ReturnBytes(0,2));
         }
 
         [Theory]
-        [InlineData(1, 7, 2)]
-        [InlineData(0, 6, 3)]
-        public void IsGetAtGood(int returnedValue, int yourByte, int position)
+        [InlineData(1, 7, 2, 2)]
+        [InlineData(0, 6, 3, 2)]
+        public void IsGetAtGood(int returnedValue, int yourByte, int position, int ByteBase)
         {
-            Assert.Equal(returnedValue, GetAt(ReturnBytes(yourByte), position));
+            Assert.Equal(returnedValue, GetAt(ReturnBytes(yourByte, ByteBase), position));
         }
 
         [Theory]
-        [InlineData(0, 1)]
-        public void GetNot(int first, int second)
+        [InlineData(0, 1, 2)]
+        public void GetNot(int first, int second, int ByteBase)
         {
-            Assert.Equal(ReturnBytes(first), NOT(ReturnBytes(second)));
+            Assert.Equal(ReturnBytes(first, ByteBase), NOT(ReturnBytes(second, ByteBase)));
         }
 
         [Theory]
-        [InlineData(7, 5, 3)]
-        public void GetOR(int expected, int first, int second)
+        [InlineData(7, 5, 3, 2)]
+        public void GetOR(int expected, int first, int second, int byteBase)
         {
-            Assert.Equal(ReturnBytes(expected), OR(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal(ReturnBytes(expected, byteBase), OR(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
-        [InlineData(3, 7, 3)]
-        public void GetAND(int expected, int first, int second)
+        [InlineData(3, 7, 3, 2)]
+        public void GetAND(int expected, int first, int second, int byteBase)
         {
-            Assert.Equal(ReturnBytes(expected), AND(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal(ReturnBytes(expected, byteBase), AND(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
-        [InlineData(6, 5, 3)] 
-        public void GetXOR(int expected, int first, int second)
+        [InlineData(6, 5, 3, 2)] 
+        public void GetXOR(int expected, int first, int second, int byteBase)
         {
-            Assert.Equal(ReturnBytes(expected), XOR(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal(ReturnBytes(expected, byteBase), XOR(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
-        [InlineData(8, 1, 3)]
-        public void GetShiftLeft(int expected, int number, int step)
+        [InlineData(8, 1, 3, 2)]
+        public void GetShiftLeft(int expected, int number, int step, int byteBase)
         {
-            Assert.Equal(ReturnBytes(expected), ShiftLeft(ReturnBytes(number), step));
+            Assert.Equal(ReturnBytes(expected, byteBase), ShiftLeft(ReturnBytes(number, byteBase), step));
         }
 
         [Theory]
-        [InlineData(1, 8, 3)]
-        public void GetShiftRight(int expected, int number, int step)
+        [InlineData(1, 8, 3, 2)]
+        public void GetShiftRight(int expected, int number, int step, int byteBase)
         {
-            Assert.Equal(ReturnBytes(expected), ShiftRight(ReturnBytes(number), step));
+            Assert.Equal(ReturnBytes(expected, byteBase), ShiftRight(ReturnBytes(number, byteBase), step));
         }
 
         [Theory]
-        [InlineData(4, 4)]
-        public void GetComparisonEqual(int first, int second)
+        [InlineData(4, 4, 2)]
+        public void GetComparisonEqual(int first, int second, int byteBase)
         {
-            Assert.Equal("Equal", Compare(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal("Equal", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
         [Theory]
-        [InlineData(4, 3)]
-        public void GetComparisonGreater(int first, int second)
+        [InlineData(4, 3, 2)]
+        public void GetComparisonGreater(int first, int second, int byteBase)
         {
-            Assert.Equal("Greater", Compare(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal("Greater", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
 
         [Theory]
-        [InlineData(4, 7)]
-        public void GetComparisonLess(int first, int second)
+        [InlineData(4, 7, 2)]
+        public void GetComparisonLess(int first, int second, int byteBase)
         {
-            Assert.Equal("Less", Compare(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal("Less", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
         
         [Theory]
-        [InlineData(5, 8)]
-        public void GetNotEqualTrue(int first, int second)
+        [InlineData(5, 8, 2)]
+        public void GetNotEqualTrue(int first, int second, int byteBase)
         {
-            Assert.Equal("Not equal", NotEqual(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal("Not equal", NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
-        [InlineData(5, 5)]
-        public void GetNotEqualFalse(int first, int second)
+        [InlineData(5, 5, 2)]
+        public void GetNotEqualFalse(int first, int second, int byteBase)
         {
-            Assert.Equal("Equal", NotEqual(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal("Equal", NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
-        [InlineData(4, 2, 2)]
-        [InlineData(8, 5, 3)]
-        public void GetSum(int result, int first, int second)
+        [InlineData(4, 2, 2, 2)]
+        [InlineData(8, 5, 3, 2)]
+        public void GetSum(int result, int first, int second, int byteBase)
         {
-            Assert.Equal(ReturnBytes(result), Sum(ReturnBytes(first), ReturnBytes(second)));
+            Assert.Equal(ReturnBytes(result, byteBase), Sum(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase), byteBase));
         }
 
         [Theory]
-        [InlineData(6, 2, 3)]
-        [InlineData(10, 5, 2)]
-        public void GetProduct(int result, int multiplicand, int multiplier)
+        [InlineData(6, 2, 3, 2)]
+        [InlineData(10, 5, 2, 2)]
+        public void GetProduct(int result, int multiplicand, int multiplier, int byteBase)
         {
-            Assert.Equal(ReturnBytes(result), Product(ReturnBytes(multiplicand), multiplier));
+            Assert.Equal(ReturnBytes(result, byteBase), Product(ReturnBytes(multiplicand, byteBase), multiplier, byteBase));
         }
 
         [Theory]
-        [InlineData(9, 12, 3)]
-        public void GetSubtraction(int result, int minuend, int subtrahend)
+        [InlineData(12, 15, 3, 2)]
+        public void GetSubtraction(int result, int minuend, int subtrahend, int byteBase)
         {
-            Assert.Equal(ReturnBytes(result), Subtraction(ReturnBytes(minuend), ReturnBytes(subtrahend)));
+            Assert.Equal(ReturnBytes(result, byteBase), Subtraction(ReturnBytes(minuend, byteBase), ReturnBytes(subtrahend, byteBase), byteBase));
         }
 
         [Theory]
-        [InlineData(5, 15, 3)]
-        public void GetDivision(int result, int dividend, int divisor)
+        [InlineData(5, 15, 3, 3)]
+        public void GetDivision(int result, int dividend, int divisor, int byteBase)
         {
-            Assert.Equal(ReturnBytes(result), Division(ReturnBytes(dividend), divisor));
+            Assert.Equal(ReturnBytes(result, byteBase), Division(ReturnBytes(dividend, byteBase), ReturnBytes(divisor, byteBase), byteBase));
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Binary
             Assert.Equal(new byte[] { 1, 0 }, EraseZeros(new byte[] { 0, 0, 1, 0 }));
         }
 
-        public byte[] ReturnBytes(int number)
+        public byte[] ReturnBytes(int number, int byteBase)
         {
             byte[] yourByte= { };
             if (number == 0)
@@ -151,8 +151,8 @@ namespace Binary
                 while (number > 0)
                 {
                     Array.Resize(ref yourByte, yourByte.Length + 1);
-                    yourByte[yourByte.Length - 1] = (byte)(number % 2);
-                    number = number / 2;
+                    yourByte[yourByte.Length - 1] = (byte)(number % byteBase);
+                    number = number / byteBase;
                 }
             }
             Array.Reverse(yourByte);
@@ -244,15 +244,15 @@ namespace Binary
             return "Equal";
         }
 
-        public byte[] Sum(byte[] firstByte, byte[] secondByte)
+        public byte[] Sum(byte[] firstByte, byte[] secondByte, int byteBase)
         {
             byte[] result = new byte[Math.Max(firstByte.Length, secondByte.Length)];
             int counter = 0;
             for (int i = 0; i < result.Length; i++)
             {
                 var sum = GetAt(firstByte, i) + GetAt(secondByte, i) + counter;
-                result[i] = (byte) (sum % 2);
-                counter = sum / 2;
+                result[i] = (byte) (sum % byteBase);
+                counter = sum / byteBase;
             }
             if (counter == 1)
             {
@@ -262,42 +262,40 @@ namespace Binary
             return result;
         }
 
-        public byte[] Product(byte[] yourByte, int multiplier)
+        public byte[] Product(byte[] yourByte, int multiplier, int byteBase)
         {
             byte[] result = new byte[yourByte.Length];
             while (multiplier != 0)
             {
-                result = Sum(result, yourByte);
+                result = Sum(result, yourByte, byteBase);
                 multiplier--;
             }
             return EraseZeros(result);
         }
 
-        public byte[] Subtraction(byte[] firstByte, byte[] secondBye)
+        public byte[] Subtraction(byte[] firstByte, byte[] secondBye, int byteBase)
         {
             byte[] result = new byte[Math.Max(firstByte.Length, secondBye.Length)];
             int counter = 0;
             for (int i = 0; i < result.Length; i++)
             {
                 var dif = 2 + GetAt(firstByte, i) - GetAt(secondBye, i) - counter;
-                result[result.Length - i - 1] = (byte)(dif % 2);
+                result[result.Length - i - 1] = (byte)(dif % byteBase);
                 counter = dif<=1 ? 1: 0;
             }
             return EraseZeros(result);
         }
 
-        public byte[] Division(byte[] yourByte, int divisor)
+        public byte[] Division(byte[] yourByte, byte[] divisorByte, int byteBase)
         {
-            byte[] result = yourByte;
-            byte[] divisorByte = ReturnBytes(divisor);
             byte[] compareByte = { 0};
             int counter = 0;
-            while (Compare(result, compareByte)!="Equal")
+            while (Compare(yourByte, compareByte)!="Equal")
             {
-                result = Subtraction(result, divisorByte);
+                yourByte = Subtraction(yourByte, divisorByte, byteBase);
                 counter++;
             }
-            return ReturnBytes(counter);
+            return ReturnBytes(counter, byteBase);
         }
 
         public byte[] ResizeByte(byte[] yourByte, int lenght)
