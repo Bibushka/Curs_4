@@ -8,13 +8,13 @@ namespace Binary
         [Fact]
         public void GetBinaryForm()
         {
-            Assert.Equal(new byte[] {1, 2 }, ReturnBytes(5,3));
+            Assert.Equal(new byte[] { 1, 2 }, ReturnBytes(5, 3));
         }
 
         [Fact]
         public void GetBinaryFormForZero()
         {
-            Assert.Equal(new byte[] { 0 }, ReturnBytes(0,2));
+            Assert.Equal(new byte[] { 0 }, ReturnBytes(0, 2));
         }
 
         [Theory]
@@ -47,7 +47,7 @@ namespace Binary
         }
 
         [Theory]
-        [InlineData(6, 5, 3, 2)] 
+        [InlineData(6, 5, 3, 2)]
         public void GetXOR(int expected, int first, int second, int byteBase)
         {
             Assert.Equal(ReturnBytes(expected, byteBase), XOR(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
@@ -71,13 +71,13 @@ namespace Binary
         [InlineData(4, 4, 2)]
         public void GetComparisonEqual(int first, int second, int byteBase)
         {
-            Assert.Equal("Equal", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
+            Assert.Equal(true, Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
         [Theory]
         [InlineData(4, 3, 2)]
         public void GetComparisonGreater(int first, int second, int byteBase)
         {
-            Assert.Equal("Greater", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
+            Assert.Equal(true, Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
 
@@ -85,21 +85,21 @@ namespace Binary
         [InlineData(4, 7, 2)]
         public void GetComparisonLess(int first, int second, int byteBase)
         {
-            Assert.Equal("Less", Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
+            Assert.Equal(true, Compare(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
-        
+
         [Theory]
         [InlineData(5, 8, 2)]
         public void GetNotEqualTrue(int first, int second, int byteBase)
         {
-            Assert.Equal("Not equal", NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
+            Assert.Equal(true, NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
         [InlineData(5, 5, 2)]
         public void GetNotEqualFalse(int first, int second, int byteBase)
         {
-            Assert.Equal("Equal", NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
+            Assert.Equal(false, NotEqual(ReturnBytes(first, byteBase), ReturnBytes(second, byteBase)));
         }
 
         [Theory]
@@ -120,6 +120,8 @@ namespace Binary
 
         [Theory]
         [InlineData(12, 15, 3, 2)]
+        [InlineData(6, 9, 3, 3)]
+        [InlineData(0, 5, 5, 4)]
         public void GetSubtraction(int result, int minuend, int subtrahend, int byteBase)
         {
             Assert.Equal(ReturnBytes(result, byteBase), Subtraction(ReturnBytes(minuend, byteBase), ReturnBytes(subtrahend, byteBase), byteBase));
@@ -140,7 +142,7 @@ namespace Binary
 
         public byte[] ReturnBytes(int number, int byteBase)
         {
-            byte[] yourByte= { };
+            byte[] yourByte = { };
             if (number == 0)
             {
                 Array.Resize(ref yourByte, yourByte.Length + 1);
@@ -186,7 +188,7 @@ namespace Binary
         {
             byte[] result = new byte[Math.Max(firstByte.Length, secondByte.Length)];
             for (int i = 0; i < result.Length; i++)
-                if (GetAt(firstByte,i) == 1 && GetAt(secondByte, i) == 1)
+                if (GetAt(firstByte, i) == 1 && GetAt(secondByte, i) == 1)
                     result[i] = 1;
                 else
                     result[i] = 0;
@@ -217,31 +219,37 @@ namespace Binary
             Array.Resize(ref yourByte, yourByte.Length - step);
             return EraseZeros(yourByte);
         }
-        
-        public string Compare(byte[] firstByte, byte[] secondByte)
+
+        public bool Compare(byte[] firstByte, byte[] secondByte)
         {
             if (firstByte.Length > secondByte.Length)
-                return "Greater";
+                return true;
             if (firstByte.Length < secondByte.Length)
-                return "Less";
+                return true;
             for (int i = firstByte.Length - 1; i >= 0; i--)
             {
                 if (GetAt(firstByte, i) > GetAt(secondByte, i))
-                    return "Greater";
+                    return true;
                 if (GetAt(firstByte, i) < GetAt(secondByte, i))
-                    return "Less";
+                    return true;
             }
-            return "Equal";
+            int c = 1;
+            for (int i = firstByte.Length - 1; i >= 0; i--)
+                if (GetAt(firstByte, i) != GetAt(secondByte, i))
+                    c = 0;
+            if (c == 1)
+                return true;
+            return false;
         }
-       
-        public string NotEqual(byte[] firstByte, byte[] secondByte)
+
+        public bool NotEqual(byte[] firstByte, byte[] secondByte)
         {
             if (firstByte.Length != secondByte.Length)
-                return "Not equal";
-            for (int i = firstByte.Length-1; i >=0; i--)
+                return true;
+            for (int i = firstByte.Length - 1; i >= 0; i--)
                 if (GetAt(firstByte, i) != GetAt(secondByte, i))
-                    return "Not equal";
-            return "Equal";
+                    return true;
+            return false;
         }
 
         public byte[] Sum(byte[] firstByte, byte[] secondByte, int byteBase)
@@ -251,13 +259,13 @@ namespace Binary
             for (int i = 0; i < result.Length; i++)
             {
                 var sum = GetAt(firstByte, i) + GetAt(secondByte, i) + counter;
-                result[i] = (byte) (sum % byteBase);
+                result[i] = (byte)(sum % byteBase);
                 counter = sum / byteBase;
             }
             if (counter == 1)
             {
-                result = ResizeByte(result, result.Length+1);
-                result[0] = (byte )counter;
+                result = ResizeByte(result, result.Length + 1);
+                result[0] = (byte)counter;
             }
             return result;
         }
@@ -279,18 +287,18 @@ namespace Binary
             int counter = 0;
             for (int i = 0; i < result.Length; i++)
             {
-                var dif = 2 + GetAt(firstByte, i) - GetAt(secondBye, i) - counter;
+                var dif = byteBase + GetAt(firstByte, i) - GetAt(secondBye, i) - counter;
                 result[result.Length - i - 1] = (byte)(dif % byteBase);
-                counter = dif<=1 ? 1: 0;
+                counter = dif <= byteBase ? (byteBase-1) : 0;
             }
             return EraseZeros(result);
         }
 
         public byte[] Division(byte[] yourByte, byte[] divisorByte, int byteBase)
         {
-            byte[] compareByte = { 0};
+            byte[] compareByte = { 0 };
             int counter = 0;
-            while (Compare(yourByte, compareByte)!="Equal")
+            while (NotEqual(yourByte, compareByte))
             {
                 yourByte = Subtraction(yourByte, divisorByte, byteBase);
                 counter++;
@@ -316,12 +324,12 @@ namespace Binary
             int counter = 0;
             for (int i = 0; i < yourByte.Length; i++)
             {
-                if(yourByte[i] == 0)
+                if (yourByte[i] == 0)
                     counter++;
                 else
                     break;
             }
-            return ResizeByte(yourByte, (yourByte.Length == counter ? 1 : yourByte.Length - counter));       
+            return ResizeByte(yourByte, (yourByte.Length == counter ? 1 : yourByte.Length - counter));
         }
     }
 }
