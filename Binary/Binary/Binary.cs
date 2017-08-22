@@ -289,7 +289,7 @@ namespace Binary
             {
                 var dif = byteBase + GetAt(firstByte, i) - GetAt(secondBye, i) - counter;
                 result[result.Length - i - 1] = (byte)(dif % byteBase);
-                counter = dif <= byteBase ? (byteBase-1) : 0;
+                counter = dif < byteBase ? 1 : 0;
             }
             return EraseZeros(result);
         }
